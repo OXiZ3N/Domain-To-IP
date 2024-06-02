@@ -23,7 +23,7 @@ def get_ip(website):
         print('\t\t [-] ' + website + ' : error')
 
 def process_sites(sites):
-    pool = Pool(100)
+    pool = Pool(150)
     pool.map(get_ip, sites)
     pool.close()
     pool.join()
