@@ -1,7 +1,8 @@
 import os
 import socket
+from multiprocessing.dummy import Pool
 
-os.system('cls')
+os.system('cls' if os.name == 'nt' else 'clear')
 print('''
 \t\t ██████╗ ██╗  ██╗██╗███████╗██████╗ ███╗   ██╗
 \t\t██╔═══██╗╚██╗██╔╝██║╚══███╔╝╚════██╗████╗  ██║
@@ -11,6 +12,7 @@ print('''
 \t\t ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚═════╝ ╚═╝  ╚═══╝
 \t\t                Domain_To_IP                                          
       ''')
+
 def get_ip(website):
     try:
         address = socket.gethostbyname(website)
@@ -20,11 +22,15 @@ def get_ip(website):
     except Exception as e:
         print('\t\t [-] ' + website + ' : error')
 
+def process_sites(sites):
+    pool = Pool(100)
+    pool.map(get_ip, sites)
+    pool.close()
+    pool.join()
+
 website_list = input('\t\t[!] Domain List: ')
 
 with open(website_list) as f:
-    for website in f:
-        website = website.strip()
-        if website.startswith('http://'):
-            website = website[7:]
-        get_ip(website)
+    sites = [line.strip().replace('http://', '').replace('https://', '') for line in f]
+
+process_sites(sites)
